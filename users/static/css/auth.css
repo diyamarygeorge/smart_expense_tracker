@@ -107,6 +107,8 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+
+    position: relative;
 }
 
 
@@ -246,24 +248,44 @@ button:hover{
 }
 
 
-/* RESPONSIVE */
+/* BACK BUTTON */
 
-@media(max-width: 950px){
+.back-btn,
+.back-btn:visited,
+.back-btn:active{
 
-    .auth-page{
-        flex-direction: column;
-    }
+    position: absolute;
 
-    .left-panel{
-        padding: 50px;
-    }
+    top: 30px;
+    left: 30px;
 
-    .left-panel h1{
-        font-size: 46px;
-    }
+    color: white !important;
 
-    .auth-card{
-        width: 90%;
-        margin: 40px 0;
-    }
+    text-decoration: none;
+
+    font-size: 16px;
+
+    font-weight: 500;
+
+    z-index: 10;
+
+    transition: 0.3s;
+}
+
+.back-btn:hover{
+
+    transform: translateX(-4px);
+
+    opacity: 0.8;
+
+    color: white !important;
+}
+a.back-btn,
+a.back-btn:visited,
+a.back-btn:hover,
+a.back-btn:active{
+
+    color: white !important;
+
+    text-decoration: none !important;
 }
