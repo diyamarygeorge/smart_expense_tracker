@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 from django.contrib import messages
+from datetime import date
+from .models import Expense
 
 
 
@@ -85,7 +87,7 @@ def login_user(request):
 
             login(request, user)
 
-            return redirect('home')
+            return redirect('dashboard')
 
         else:
 
@@ -106,3 +108,60 @@ def logout_user(request):
     logout(request)
 
     return redirect('home')
+
+
+def dashboard(request):
+
+    if request.method == "POST":
+
+        item_name = request.POST['item_name']
+
+        category = request.POST['category']
+
+        amount = request.POST['amount']
+
+        expense_date = request.POST['expense_date']
+
+
+        Expense.objects.create(
+
+            user=request.user,
+
+            item_name=item_name,
+
+            category=category,
+
+            amount=amount,
+
+            expense_date=expense_date
+
+        )
+
+
+        return redirect('dashboard')
+
+
+    expenses = Expense.objects.filter(
+        user=request.user
+    )
+
+    total_spent = sum(
+        expense.amount
+        for expense in expenses
+    )
+
+    context = {
+
+        'today': date.today(),
+
+        'expenses': expenses,
+
+        'total_spent': total_spent
+
+    }
+
+    return render(
+        request,
+        'index.html',
+        context
+    )
