@@ -1,0 +1,94 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Expense</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="modal"
+     style="display:flex;">
+
+    <div class="modal-content">
+
+        <h2>Edit Expense</h2>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="item_name"
+                value="{{ expense.item_name }}"
+                required>
+
+            <select name="category">
+
+                <option {% if expense.category == 'Food' %}selected{% endif %}>
+                    Food
+                </option>
+
+                <option {% if expense.category == 'Travel' %}selected{% endif %}>
+                    Travel
+                </option>
+
+                <option {% if expense.category == 'Shopping' %}selected{% endif %}>
+                    Shopping
+                </option>
+
+                <option {% if expense.category == 'Bills' %}selected{% endif %}>
+                    Bills
+                </option>
+
+                <option {% if expense.category == 'Education' %}selected{% endif %}>
+                    Education
+                </option>
+
+                <option {% if expense.category == 'Other' %}selected{% endif %}>
+                    Other
+                </option>
+
+            </select>
+
+            <input
+                type="number"
+                name="amount"
+                value="{{ expense.amount }}"
+                required>
+
+            <input
+                type="date"
+                name="expense_date"
+                value="{{ expense.expense_date|date:'Y-m-d' }}"
+                required>
+
+            <div class="modal-buttons">
+
+                <a href="{% url 'dashboard' %}"
+                   class="cancel-btn">
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="save-btn">
+
+                    Update
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

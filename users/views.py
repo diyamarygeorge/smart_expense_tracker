@@ -165,3 +165,34 @@ def dashboard(request):
         'index.html',
         context
     )
+    
+def edit_expense(request, id):
+
+    expense = Expense.objects.get(id=id)
+
+    if request.method == "POST":
+
+        expense.item_name = request.POST['item_name']
+
+        expense.category = request.POST['category']
+
+        expense.amount = request.POST['amount']
+
+        expense.expense_date = request.POST['expense_date']
+
+        expense.save()
+
+        return redirect('dashboard')
+
+    return render(
+        request,
+        'edit_expense.html',
+        {'expense': expense}
+    )
+def delete_expense(request, id):
+
+    expense = Expense.objects.get(id=id)
+
+    expense.delete()
+
+    return redirect('dashboard')

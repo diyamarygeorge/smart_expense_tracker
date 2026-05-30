@@ -205,3 +205,56 @@ td{
 .save-btn:hover{
     background:#2454d3;
 }
+
+/* ACTIONS */
+
+.action-cell{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+}
+.edit-btn,
+.delete-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    font-size:18px;
+
+    color:#374151;
+
+    transition:0.3s;
+}
+
+.edit-btn:hover{
+
+    color:royalblue;
+
+    transform:scale(1.15);
+}
+
+.delete-btn:hover{
+
+    color:#ef4444;
+
+    transform:scale(1.15);
+}
+
+.delete-text{
+
+    text-align:center;
+
+    margin:20px 0;
+
+    color:#4b5563;
+
+    font-size:16px;
+
+    line-height:1.6;
+}
