@@ -27,7 +27,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <div class="container">
 
+<div class="navbar">
 
+    <a href="{% url 'dashboard' %}"
+       class="active">
+        Dashboard
+    </a>
+
+    <a href="{% url 'monthly_history' %}">
+        Monthly History
+    </a>
+
+</div>
 <!-- HEADER -->
 
 <div class="header">
@@ -43,7 +54,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         </p>
 
         <h2>
-            Expenses
+            {{ current_month }} Expenses
         </h2>
 
     </div>

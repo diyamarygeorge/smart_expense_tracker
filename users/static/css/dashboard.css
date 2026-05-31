@@ -258,3 +258,28 @@ td{
 
     line-height:1.6;
 }
+.navbar{
+    display:flex;
+    justify-content:center;
+    width:100%;
+    gap:60px;
+    margin-bottom:40px;
+}
+
+.navbar a{
+    text-decoration:none;
+    color:#64748b;
+    font-size:18px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.navbar a:hover{
+    color:royalblue;
+}
+
+.navbar .active{
+    color:royalblue;
+    border-bottom:3px solid royalblue;
+    padding-bottom:8px;
+}

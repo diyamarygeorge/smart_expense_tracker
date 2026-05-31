@@ -141,9 +141,14 @@ def dashboard(request):
         return redirect('dashboard')
 
 
+    today = date.today()
+
     expenses = Expense.objects.filter(
-        user=request.user
+        user=request.user,
+        expense_date__month=today.month,
+        expense_date__year=today.year
     )
+    
 
     total_spent = sum(
         expense.amount
@@ -152,7 +157,9 @@ def dashboard(request):
 
     context = {
 
-        'today': date.today(),
+        'today': today,
+
+        'current_month': today.strftime("%B %Y"),
 
         'expenses': expenses,
 
@@ -196,3 +203,7 @@ def delete_expense(request, id):
     expense.delete()
 
     return redirect('dashboard')
+
+def monthly_history(request):
+
+    return render( request, 'monthly_history.html')

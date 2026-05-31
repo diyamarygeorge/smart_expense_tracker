@@ -18,5 +18,7 @@ urlpatterns = [
     path('edit-expense/<int:id>/',views.edit_expense,name='edit_expense'),
 
     path('delete-expense/<int:id>/',views.delete_expense,name='delete_expense'),
+    
+    path('monthly-history/',views.monthly_history,name='monthly_history'),
 
 ]
