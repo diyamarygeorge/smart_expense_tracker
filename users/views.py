@@ -205,5 +205,43 @@ def delete_expense(request, id):
     return redirect('dashboard')
 
 def monthly_history(request):
+    today = date.today()
 
-    return render( request, 'monthly_history.html')
+    try:
+        selected_month = int(request.GET.get('month', today.month))
+        selected_year = int(request.GET.get('year', today.year))
+    except (ValueError, TypeError):
+        selected_month = today.month
+        selected_year = today.year
+
+    expenses = Expense.objects.filter(
+        user=request.user,
+        expense_date__month=selected_month,
+        expense_date__year=selected_year
+    ).order_by('expense_date')
+
+    total_spent = sum(expense.amount for expense in expenses)
+
+    first_expense = Expense.objects.filter(user=request.user).order_by('expense_date').first()
+    min_year = first_expense.expense_date.year if first_expense else today.year
+    max_year = today.year
+
+    months = [
+        (1, 'January'), (2, 'February'), (3, 'March'),
+        (4, 'April'),   (5, 'May'),      (6, 'June'),
+        (7, 'July'),    (8, 'August'),   (9, 'September'),
+        (10, 'October'),(11, 'November'),(12, 'December'),
+    ]
+
+    context = {
+        'expenses': expenses,
+        'total_spent': total_spent,
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'months': months,
+        'min_year': min_year,
+        'max_year': max_year,
+        'selected_month_name': date(selected_year, selected_month, 1).strftime("%B %Y"),
+    }
+
+    return render(request, 'monthly_history.html', context)
