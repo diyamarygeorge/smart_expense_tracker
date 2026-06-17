@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 
 from django.contrib import messages
 from datetime import date
+from collections import defaultdict
+import calendar
 from .models import Expense
 
 
@@ -147,13 +149,48 @@ def dashboard(request):
         user=request.user,
         expense_date__month=today.month,
         expense_date__year=today.year
-    )
-    
+    ).order_by('-expense_date')
+
 
     total_spent = sum(
         expense.amount
         for expense in expenses
     )
+
+    # ---------- SUMMARY CARD STATS ----------
+
+    txn_count = expenses.count()
+
+    # Daily average — total / days elapsed this month so far
+    days_elapsed = today.day
+    daily_avg = total_spent / days_elapsed if days_elapsed else 0
+
+    # Category totals (used for biggest category + donut chart)
+    cat_totals = defaultdict(float)
+    for e in expenses:
+        cat_totals[e.category] += float(e.amount)
+
+    if cat_totals:
+        biggest_category = max(cat_totals, key=cat_totals.get)
+        biggest_category_amount = cat_totals[biggest_category]
+    else:
+        biggest_category = "—"
+        biggest_category_amount = 0
+
+    # ---------- CHART DATA ----------
+
+    # Donut: category -> total
+    category_labels = list(cat_totals.keys())
+    category_values = [round(cat_totals[c], 2) for c in category_labels]
+
+    # Line: spending per day across this month
+    days_in_month = calendar.monthrange(today.year, today.month)[1]
+    daily_totals = [0.0] * days_in_month
+    for e in expenses:
+        daily_totals[e.expense_date.day - 1] += float(e.amount)
+
+    day_labels = [str(d) for d in range(1, days_in_month + 1)]
+    daily_values = [round(v, 2) for v in daily_totals]
 
     context = {
 
@@ -163,7 +200,19 @@ def dashboard(request):
 
         'expenses': expenses,
 
-        'total_spent': total_spent
+        'total_spent': total_spent,
+
+        # summary cards
+        'txn_count': txn_count,
+        'daily_avg': round(daily_avg, 2),
+        'biggest_category': biggest_category,
+        'biggest_category_amount': round(biggest_category_amount, 2),
+
+        # charts (json-encoded in template)
+        'category_labels': category_labels,
+        'category_values': category_values,
+        'day_labels': day_labels,
+        'daily_values': daily_values,
 
     }
 
@@ -172,7 +221,7 @@ def dashboard(request):
         'index.html',
         context
     )
-    
+
 def edit_expense(request, id):
 
     expense = Expense.objects.get(id=id)

@@ -73,6 +73,62 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 </div>
 
 
+<!-- SUMMARY CARDS -->
+
+<div class="cards">
+
+    <div class="card">
+        <span class="card-label">Spent this month</span>
+        <span class="card-value">₹{{ total_spent }}</span>
+        <span class="card-sub">{{ current_month }}</span>
+    </div>
+
+    <div class="card">
+        <span class="card-label">Daily average</span>
+        <span class="card-value">₹{{ daily_avg }}</span>
+        <span class="card-sub">across {{ today.day }} days</span>
+    </div>
+
+    <div class="card">
+        <span class="card-label">Top category</span>
+        <span class="card-value card-value-sm">{{ biggest_category }}</span>
+        <span class="card-sub">₹{{ biggest_category_amount }}</span>
+    </div>
+
+    <div class="card">
+        <span class="card-label">Transactions</span>
+        <span class="card-value">{{ txn_count }}</span>
+        <span class="card-sub">this month</span>
+    </div>
+
+</div>
+
+
+<!-- CHARTS -->
+
+<div class="charts">
+
+    <div class="chart-box">
+        <h3 class="chart-title">Where it goes</h3>
+        {% if category_labels %}
+            <canvas id="categoryChart"></canvas>
+        {% else %}
+            <p class="chart-empty">No data yet this month</p>
+        {% endif %}
+    </div>
+
+    <div class="chart-box chart-box-wide">
+        <h3 class="chart-title">Daily spending</h3>
+        {% if category_labels %}
+            <canvas id="dailyChart"></canvas>
+        {% else %}
+            <p class="chart-empty">No data yet this month</p>
+        {% endif %}
+    </div>
+
+</div>
+
+
 <!-- TABLE -->
 
 <div class="table-container">
@@ -141,7 +197,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             <tr>
 
-                <td colspan="5"
+                <td colspan="6"
                     style="text-align:center;">
 
                     No expenses added yet
@@ -338,6 +394,79 @@ function closeDeleteModal(){
     ).style.display = "none";
 }
 
+</script>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+{{ category_labels|json_script:"category-labels" }}
+{{ category_values|json_script:"category-values" }}
+{{ day_labels|json_script:"day-labels" }}
+{{ daily_values|json_script:"daily-values" }}
+
+<script>
+(function () {
+    const $ = id => document.getElementById(id);
+    const read = id => JSON.parse($(id).textContent);
+
+    const BLUE    = "#2554e6";
+    const PALETTE = ["#2554e6","#3b6ef5","#10b981","#f59e0b","#ef4444","#8b5cf6","#06b6d4"];
+
+    const catLabels = read("category-labels");
+    const catValues = read("category-values");
+    const dayLabels = read("day-labels");
+    const dayValues = read("daily-values");
+
+    // DONUT — category breakdown
+    if ($("categoryChart") && catLabels.length) {
+        new Chart($("categoryChart"), {
+            type: "doughnut",
+            data: {
+                labels: catLabels,
+                datasets: [{ data: catValues, backgroundColor: PALETTE, borderWidth: 0 }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                cutout: "65%",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: { padding: 16, usePointStyle: true, font: { family: "Inter", size: 12 } }
+                    }
+                }
+            }
+        });
+    }
+
+    // LINE — daily spending across the month
+    if ($("dailyChart") && dayLabels.length) {
+        new Chart($("dailyChart"), {
+            type: "line",
+            data: {
+                labels: dayLabels,
+                datasets: [{
+                    data: dayValues,
+                    borderColor: BLUE,
+                    backgroundColor: "rgba(37,84,230,.08)",
+                    fill: true,
+                    tension: .35,
+                    pointRadius: 2,
+                    pointBackgroundColor: BLUE
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { family: "Inter", size: 11 }, maxTicksLimit: 12 } },
+                    y: { beginAtZero: true, grid: { color: "#eef2f7" }, ticks: { font: { family: "Inter", size: 11 } } }
+                }
+            }
+        });
+    }
+})();
 </script>
 
 </body>
