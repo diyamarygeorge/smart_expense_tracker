@@ -10,36 +10,38 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <style>
         .picker-wrapper {
-            margin: 24px 0 32px 0;
+            margin: 24px 0 24px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
-        .picker-left, .picker-right {
+        .picker-left {
             position: relative;
         }
 
         .picker-toggle-btn {
             background: #fff;
-            border: 2px solid #e5e7eb;
+            border: 1.5px solid var(--line);
             border-radius: 12px;
             padding: 12px 20px;
             font-size: 15px;
             font-weight: 600;
-            color: #4361ee;
+            color: var(--blue-600);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
             transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
             white-space: nowrap;
         }
 
         .picker-toggle-btn:hover {
-            border-color: #4361ee;
-            background: #eef0ff;
+            border-color: var(--blue-500);
+            background: var(--blue-50);
         }
 
         .picker-toggle-btn i.fa-chevron-down {
@@ -58,7 +60,7 @@
             border-radius: 16px;
             padding: 28px 32px;
             margin-top: 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 32px rgba(15,23,42,0.12);
             position: absolute;
             left: 0;
             z-index: 100;
@@ -87,7 +89,7 @@
 
         .month-btn {
             padding: 10px 6px;
-            border: 2px solid #e5e7eb;
+            border: 1.5px solid var(--line);
             border-radius: 10px;
             background: #f9fafb;
             color: #374151;
@@ -99,14 +101,14 @@
         }
 
         .month-btn:hover {
-            border-color: #4361ee;
-            color: #4361ee;
-            background: #eef0ff;
+            border-color: var(--blue-500);
+            color: var(--blue-600);
+            background: var(--blue-50);
         }
 
         .month-btn.active {
-            background: #4361ee;
-            border-color: #4361ee;
+            background: var(--blue-600);
+            border-color: var(--blue-600);
             color: #fff;
             font-weight: 600;
         }
@@ -120,13 +122,13 @@
 
         .year-arrow {
             background: #f9fafb;
-            border: 2px solid #e5e7eb;
+            border: 1.5px solid var(--line);
             border-radius: 8px;
             width: 36px;
             height: 36px;
             cursor: pointer;
             font-size: 13px;
-            color: #4361ee;
+            color: var(--blue-600);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -134,13 +136,13 @@
         }
 
         .year-arrow:hover:not(:disabled) {
-            background: #eef0ff;
-            border-color: #4361ee;
+            background: var(--blue-50);
+            border-color: var(--blue-500);
         }
 
         .year-arrow:disabled {
             color: #d1d5db;
-            border-color: #e5e7eb;
+            border-color: var(--line);
             cursor: not-allowed;
             background: #f9fafb;
         }
@@ -153,63 +155,12 @@
             text-align: center;
         }
 
-        /* CATEGORY FILTER DROPDOWN */
-        .filter-dropdown {
-            display: none;
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px 0;
-            margin-top: 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            position: absolute;
-            right: 0;
-            z-index: 100;
-            min-width: 200px;
-        }
-
-        .filter-dropdown.open {
-            display: block;
-        }
-
-        .filter-option {
-            padding: 11px 22px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            cursor: pointer;
-            transition: background 0.15s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-option:hover {
-            background: #eef0ff;
-            color: #4361ee;
-        }
-
-        .filter-option.active {
-            color: #4361ee;
-            font-weight: 700;
-        }
-
-        .filter-option .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4361ee;
-            opacity: 0;
-        }
-
-        .filter-option.active .dot {
-            opacity: 1;
-        }
-
         /* HEADING + TABLE */
         .history-heading {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            color: #4361ee;
+            color: var(--ink);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             margin-bottom: 20px;
         }
 
@@ -229,6 +180,8 @@
     <div class="navbar">
         <a href="{% url 'dashboard' %}">Dashboard</a>
         <a href="{% url 'monthly_history' %}" class="active">Monthly History</a>
+        <a href="{% url 'budget' %}">Budget</a>
+        <a href="{% url 'logout' %}" class="nav-logout">Logout</a>
     </div>
 
     <!-- HEADER -->
@@ -236,12 +189,9 @@
         <div>
             <h1>Hi {{ request.user.username }} 👋</h1>
         </div>
-        <div>
-            <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
-        </div>
     </div>
 
-    <!-- PICKER ROW: calendar left, filter right -->
+    <!-- PICKER ROW: calendar left, search+filter right -->
     <div class="picker-wrapper">
 
         <!-- LEFT: Month/Year Picker -->
@@ -277,43 +227,43 @@
             </div>
         </div>
 
-        <!-- RIGHT: Category Filter -->
-        <div class="picker-right">
-            <button class="picker-toggle-btn" id="filterBtn" onclick="toggleFilter()">
-                <i class="fa-solid fa-sliders"></i>
-                <span id="filterLabel">All Categories</span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </button>
+        <!-- RIGHT: Search + Category Filter (backend, GET form) -->
+        <form method="GET" class="filter-bar" id="filterBar">
+            <input type="hidden" name="month" value="{{ selected_month }}">
+            <input type="hidden" name="year" value="{{ selected_year }}">
 
-            <div class="filter-dropdown" id="filterDropdown">
-                <div class="filter-option active" onclick="applyFilter('All')">
-                    <span class="dot"></span> All
-                </div>
-                <div class="filter-option" onclick="applyFilter('Food')">
-                    <span class="dot"></span> Food
-                </div>
-                <div class="filter-option" onclick="applyFilter('Travel')">
-                    <span class="dot"></span> Travel
-                </div>
-                <div class="filter-option" onclick="applyFilter('Shopping')">
-                    <span class="dot"></span> Shopping
-                </div>
-                <div class="filter-option" onclick="applyFilter('Bills')">
-                    <span class="dot"></span> Bills
-                </div>
-                <div class="filter-option" onclick="applyFilter('Education')">
-                    <span class="dot"></span> Education
-                </div>
-                <div class="filter-option" onclick="applyFilter('Other')">
-                    <span class="dot"></span> Other
-                </div>
+            <div class="search-field">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search_query }}"
+                    placeholder="Search items..."
+                    autocomplete="off">
             </div>
-        </div>
+
+            <select name="category" onchange="document.getElementById('filterBar').submit()">
+                <option value="All" {% if category_filter == 'All' %}selected{% endif %}>All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="filter-apply-btn">Search</button>
+
+            {% if search_query or category_filter != 'All' %}
+            <a href="{% url 'monthly_history' %}?month={{ selected_month }}&year={{ selected_year }}" class="filter-clear-btn">Clear</a>
+            {% endif %}
+        </form>
 
     </div>
 
     <!-- RESULTS HEADING -->
-    <h2 class="history-heading" id="historyHeading">{{ selected_month_name }} Expenses</h2>
+    <h2 class="history-heading">
+        {{ selected_month_name }}
+        {% if category_filter != 'All' %} — {{ category_filter }}{% endif %}
+        Expenses
+    </h2>
 
     <!-- TABLE -->
     <div class="table-container">
@@ -327,19 +277,19 @@
                     <th>Date</th>
                 </tr>
             </thead>
-            <tbody id="expenseTableBody">
+            <tbody>
                 {% for expense in expenses %}
-                <tr data-category="{{ expense.category }}">
-                    <td class="row-num">{{ forloop.counter }}</td>
+                <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>{{ expense.item_name }}</td>
                     <td>{{ expense.category }}</td>
                     <td>₹{{ expense.amount }}</td>
                     <td>{{ expense.expense_date }}</td>
                 </tr>
                 {% empty %}
-                <tr id="emptyRow">
+                <tr>
                     <td colspan="5" class="no-expenses">
-                        No expenses found for this month
+                        No expenses found
                     </td>
                 </tr>
                 {% endfor %}
@@ -348,7 +298,7 @@
     </div>
 
     <!-- TOTAL -->
-    <div class="total" id="totalDisplay">
+    <div class="total">
         Total Spent: ₹{{ total_spent }}
     </div>
 
@@ -359,14 +309,10 @@
     let currentYear = {{ selected_year }};
     const minYear = {{ min_year }};
     const maxYear = {{ max_year }};
-    const monthName = "{{ selected_month_name }}";
 
-    // Expense data from Django for recalculating totals
-    const allExpenses = [
-        {% for expense in expenses %}
-        { category: "{{ expense.category }}", amount: {{ expense.amount }} },
-        {% endfor %}
-    ];
+    // Preserve active search/category when navigating months
+    const searchQuery = "{{ search_query|escapejs }}";
+    const categoryFilter = "{{ category_filter|escapejs }}";
 
     /* ── YEAR ARROWS ── */
     function updateArrows() {
@@ -378,38 +324,23 @@
     function togglePicker() {
         document.getElementById('toggleBtn').classList.toggle('open');
         document.getElementById('pickerDropdown').classList.toggle('open');
-        // close filter if open
-        document.getElementById('filterBtn').classList.remove('open');
-        document.getElementById('filterDropdown').classList.remove('open');
-    }
-
-    /* ── FILTER TOGGLE ── */
-    function toggleFilter() {
-        document.getElementById('filterBtn').classList.toggle('open');
-        document.getElementById('filterDropdown').classList.toggle('open');
-        // close calendar if open
-        document.getElementById('toggleBtn').classList.remove('open');
-        document.getElementById('pickerDropdown').classList.remove('open');
     }
 
     /* ── CLOSE ON OUTSIDE CLICK ── */
     document.addEventListener('click', function(e) {
         const left = document.querySelector('.picker-left');
-        const right = document.querySelector('.picker-right');
-
         if (!left.contains(e.target)) {
             document.getElementById('toggleBtn').classList.remove('open');
             document.getElementById('pickerDropdown').classList.remove('open');
         }
-        if (!right.contains(e.target)) {
-            document.getElementById('filterBtn').classList.remove('open');
-            document.getElementById('filterDropdown').classList.remove('open');
-        }
     });
 
-    /* ── NAVIGATION ── */
+    /* ── NAVIGATION (carries search + category along) ── */
     function navigate() {
-        window.location.href = `{% url 'monthly_history' %}?month=${currentMonth}&year=${currentYear}`;
+        let url = `{% url 'monthly_history' %}?month=${currentMonth}&year=${currentYear}`;
+        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+        if (categoryFilter && categoryFilter !== 'All') url += `&category=${encodeURIComponent(categoryFilter)}`;
+        window.location.href = url;
     }
 
     function selectMonth(month) {
@@ -423,52 +354,6 @@
         currentYear = newYear;
         document.getElementById('yearLabel').textContent = currentYear;
         updateArrows();
-    }
-
-    /* ── CATEGORY FILTER ── */
-    function applyFilter(category) {
-        const rows = document.querySelectorAll('#expenseTableBody tr[data-category]');
-        const options = document.querySelectorAll('.filter-option');
-
-        // Update active state on options
-        options.forEach(opt => {
-            opt.classList.toggle('active', opt.textContent.trim() === category || (category === 'All' && opt.textContent.trim() === 'All'));
-        });
-
-        // Update button label
-        document.getElementById('filterLabel').textContent = category === 'All' ? 'All Categories' : category;
-
-        // Show/hide rows and recalculate serial numbers
-        let visibleCount = 0;
-        let filteredTotal = 0;
-
-        rows.forEach(row => {
-            const match = category === 'All' || row.dataset.category === category;
-            row.style.display = match ? '' : 'none';
-            if (match) {
-                visibleCount++;
-                row.querySelector('.row-num').textContent = visibleCount;
-                // find amount from allExpenses (use row index)
-            }
-        });
-
-        // Recalculate total from allExpenses array
-        filteredTotal = allExpenses
-            .filter(e => category === 'All' || e.category === category)
-            .reduce((sum, e) => sum + parseFloat(e.amount), 0);
-
-        document.getElementById('totalDisplay').textContent =
-            `Total Spent: ₹${filteredTotal.toFixed(2)}`;
-
-        // Update heading
-        document.getElementById('historyHeading').textContent =
-            category === 'All'
-                ? `${monthName} Expenses`
-                : `${monthName} — ${category} Expenses`;
-
-        // Close dropdown
-        document.getElementById('filterBtn').classList.remove('open');
-        document.getElementById('filterDropdown').classList.remove('open');
     }
 
     updateArrows();

@@ -1,0 +1,160 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'monthly_history' %}">Monthly History</a>
+        <a href="{% url 'budget' %}" class="active">Budget</a>
+        <a href="{% url 'logout' %}" class="nav-logout">Logout</a>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div>
+            <h1>Monthly Budget</h1>
+            <p>{{ current_month }}</p>
+        </div>
+    </div>
+
+    <!-- OVERALL BUDGET PROGRESS CARD -->
+    <div class="budget-card">
+
+        {% if budget_status == 'none' %}
+            <div class="budget-empty">
+                <i class="fa-solid fa-piggy-bank"></i>
+                <p>No overall budget set yet. Set a monthly limit below to start tracking.</p>
+            </div>
+        {% else %}
+            <div class="budget-top">
+                <div>
+                    <span class="budget-spent">₹{{ full_month_spent }}</span>
+                    <span class="budget-of">spent of ₹{{ monthly_limit }}</span>
+                </div>
+                <div class="budget-pct budget-pct-{{ budget_status }}">
+                    {{ budget_percent }}%
+                </div>
+            </div>
+
+            <div class="budget-bar">
+                <div class="budget-fill budget-fill-{{ budget_status }}"
+                     style="width: {{ budget_percent }}%;"></div>
+            </div>
+
+            <div class="budget-bottom">
+                {% if budget_status == 'over' %}
+                    <span class="budget-msg budget-msg-over">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        You're over budget by ₹{{ budget_overage }}
+                    </span>
+                {% elif budget_status == 'warn' %}
+                    <span class="budget-msg budget-msg-warn">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        ₹{{ budget_remaining }} left — getting close
+                    </span>
+                {% else %}
+                    <span class="budget-msg budget-msg-ok">
+                        <i class="fa-solid fa-circle-check"></i>
+                        ₹{{ budget_remaining }} left this month
+                    </span>
+                {% endif %}
+            </div>
+        {% endif %}
+
+    </div>
+
+    <!-- SET BUDGET FORM (overall + per-category) -->
+    <form method="POST" class="budget-form-card">
+        {% csrf_token %}
+
+        <h2 class="budget-form-title">
+            <i class="fa-solid fa-sliders"></i> Overall monthly limit
+        </h2>
+
+        <div class="budget-form">
+            <div class="budget-input-wrap">
+                <span class="budget-currency">₹</span>
+                <input
+                    type="number"
+                    name="monthly_limit"
+                    step="0.01"
+                    min="0"
+                    value="{% if monthly_limit > 0 %}{{ monthly_limit }}{% endif %}"
+                    placeholder="Enter total amount">
+            </div>
+        </div>
+
+        <p class="budget-hint">Your total spending cap for the month across all categories.</p>
+
+        <!-- PER-CATEGORY LIMITS -->
+        <div class="cat-budget-divider"></div>
+
+        <h2 class="budget-form-title">
+            <i class="fa-solid fa-layer-group"></i> Per-category limits
+            <span class="budget-optional">optional</span>
+        </h2>
+        <p class="budget-hint" style="margin-top:-8px; margin-bottom:20px;">
+            Set a cap for any category you want to watch. Leave blank for no limit.
+        </p>
+
+        <div class="cat-budget-list">
+            {% for row in category_rows %}
+            <div class="cat-budget-row">
+
+                <div class="cat-budget-head">
+                    <span class="cat-budget-name">{{ row.category }}</span>
+                    {% if row.is_set %}
+                        <span class="cat-budget-spent budget-pct-{{ row.status }}">
+                            ₹{{ row.spent }} / ₹{{ row.limit }}
+                        </span>
+                    {% else %}
+                        <span class="cat-budget-spent cat-budget-muted">
+                            ₹{{ row.spent }} spent
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if row.is_set %}
+                <div class="cat-budget-bar">
+                    <div class="budget-fill budget-fill-{{ row.status }}"
+                         style="width: {{ row.percent }}%;"></div>
+                </div>
+                {% endif %}
+
+                <div class="cat-budget-input-wrap">
+                    <span class="budget-currency">₹</span>
+                    <input
+                        type="number"
+                        name="cat_{{ row.category }}"
+                        step="0.01"
+                        min="0"
+                        value="{{ row.limit }}"
+                        placeholder="No limit">
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="save-btn budget-save-btn">
+            Save Budget
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

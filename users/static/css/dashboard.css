@@ -585,3 +585,657 @@ td:nth-child(5){
 @media (prefers-reduced-motion:reduce){
     *{ animation:none !important; transition:none !important; }
 }
+
+/* ============================================ */
+/*  NAVBAR LOGOUT ICON                          */
+/* ============================================ */
+
+.nav-logout{
+    text-decoration:none;
+    color:var(--slate-600);
+    font-size:14px;
+    font-weight:600;
+    padding:10px 22px;
+    border-radius:999px;
+    transition:.2s ease;
+}
+
+.nav-logout:hover{
+    color:var(--red);
+    background:var(--red-soft);
+}
+
+/* ============================================ */
+/*  DATE INPUT — full-field click target        */
+/* ============================================ */
+
+input[type="date"]{
+    cursor:pointer;
+    position:relative;
+}
+
+/* Make the native calendar-picker indicator cover the whole field,
+   so a click anywhere on the input opens the picker */
+input[type="date"]::-webkit-calendar-picker-indicator{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    margin:0;
+    padding:0;
+    cursor:pointer;
+    opacity:0;            /* invisible, but still the click target */
+}
+
+/* Keep a visible calendar icon on the right */
+input[type="date"]{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='18' rx='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/><line x1='3' y1='10' x2='21' y2='10'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 15px center;
+}
+
+/* ============================================ */
+/*  SEARCH + FILTER BAR                          */
+/* ============================================ */
+
+.filter-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+}
+
+.search-field{
+    position:relative;
+    flex:1;
+    min-width:200px;
+}
+
+.search-field i{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--slate-400);
+    font-size:14px;
+    pointer-events:none;
+}
+
+.search-field input{
+    width:100%;
+    padding:12px 16px 12px 42px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    outline:none;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--surface);
+    transition:.18s ease;
+}
+
+.search-field input::placeholder{
+    color:var(--slate-400);
+}
+
+.search-field input:focus{
+    border-color:var(--blue-500);
+    box-shadow:0 0 0 4px rgba(59,110,245,.12);
+}
+
+.filter-bar select{
+    padding:12px 16px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    outline:none;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    color:var(--ink);
+    background:var(--surface);
+    cursor:pointer;
+    transition:.18s ease;
+}
+
+.filter-bar select:focus{
+    border-color:var(--blue-500);
+    box-shadow:0 0 0 4px rgba(59,110,245,.12);
+}
+
+.filter-apply-btn{
+    padding:12px 22px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--blue-500), var(--blue-600));
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(37,84,230,.26);
+    transition:.18s ease;
+}
+
+.filter-apply-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 22px rgba(37,84,230,.34);
+}
+
+.filter-clear-btn{
+    padding:12px 20px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    color:var(--slate-600);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    text-decoration:none;
+    transition:.18s ease;
+}
+
+.filter-clear-btn:hover{
+    background:var(--bg);
+    color:var(--ink);
+}
+
+@media (max-width:640px){
+    .filter-bar{ flex-direction:column; align-items:stretch; }
+    .filter-bar select,
+    .filter-apply-btn,
+    .filter-clear-btn{ width:100%; text-align:center; }
+}
+
+/* ============================================ */
+/*  BUDGET — shared status colors                */
+/* ============================================ */
+
+/* Progress fill colors by status */
+.budget-fill{
+    height:100%;
+    border-radius:999px;
+    transition:width .4s ease;
+}
+.budget-fill-ok{   background:linear-gradient(90deg, #34d399, var(--green)); }
+.budget-fill-warn{ background:linear-gradient(90deg, #fbbf24, #f59e0b); }
+.budget-fill-over{ background:linear-gradient(90deg, #f87171, var(--red)); }
+
+.budget-pct-ok{   color:var(--green); }
+.budget-pct-warn{ color:#f59e0b; }
+.budget-pct-over{ color:var(--red); }
+
+/* ---------- DASHBOARD BUDGET STRIP ---------- */
+
+.budget-strip{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 22px;
+    margin-bottom:24px;
+    text-decoration:none;
+    box-shadow:var(--shadow-sm);
+    transition:.2s ease;
+}
+
+.budget-strip:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow-md);
+}
+
+.budget-strip-info{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    min-width:170px;
+}
+
+.budget-strip-label{
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    color:var(--slate-400);
+}
+
+.budget-strip-amount{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:18px;
+    font-weight:700;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+}
+
+.budget-strip-of{
+    font-size:14px;
+    font-weight:500;
+    color:var(--slate-400);
+}
+
+.budget-strip-bar{
+    flex:1;
+    height:10px;
+    background:var(--bg);
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.budget-strip-pct{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:18px;
+    font-weight:800;
+    min-width:52px;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+}
+
+/* "set a budget" prompt variant */
+.budget-strip-set{
+    justify-content:center;
+    gap:12px;
+    color:var(--slate-600);
+    font-size:14px;
+    font-weight:600;
+}
+.budget-strip-set i:first-child{ color:var(--blue-500); }
+.budget-strip-set i:last-child{ color:var(--slate-400); font-size:13px; }
+
+/* ---------- BUDGET PAGE ---------- */
+
+.budget-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:32px;
+    box-shadow:var(--shadow-md);
+    margin-bottom:24px;
+}
+
+.budget-top{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin-bottom:18px;
+}
+
+.budget-spent{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:34px;
+    font-weight:800;
+    color:var(--ink);
+    letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;
+}
+
+.budget-of{
+    font-size:15px;
+    font-weight:500;
+    color:var(--slate-400);
+    margin-left:8px;
+}
+
+.budget-pct{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:28px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+}
+
+.budget-bar{
+    height:14px;
+    background:var(--bg);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:16px;
+}
+
+.budget-bottom{
+    display:flex;
+    justify-content:flex-start;
+}
+
+.budget-msg{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    font-weight:600;
+}
+.budget-msg-ok{   color:var(--green); }
+.budget-msg-warn{ color:#f59e0b; }
+.budget-msg-over{ color:var(--red); }
+
+.budget-empty{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    padding:24px 0;
+    text-align:center;
+}
+.budget-empty i{
+    font-size:36px;
+    color:var(--blue-200);
+}
+.budget-empty p{
+    color:var(--slate-600);
+    font-size:15px;
+    max-width:360px;
+}
+
+/* set-budget form */
+.budget-form-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:32px;
+    box-shadow:var(--shadow-md);
+}
+
+.budget-form-title{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:18px;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:20px;
+}
+
+.budget-form{
+    display:flex;
+    gap:12px;
+    align-items:stretch;
+}
+
+.budget-input-wrap{
+    position:relative;
+    flex:1;
+}
+
+.budget-currency{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--slate-400);
+    font-size:16px;
+    font-weight:600;
+}
+
+.budget-input-wrap input{
+    width:100%;
+    padding:14px 16px 14px 38px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    outline:none;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    color:var(--ink);
+    background:var(--bg);
+    transition:.18s ease;
+}
+
+.budget-input-wrap input:focus{
+    border-color:var(--blue-500);
+    background:var(--surface);
+    box-shadow:0 0 0 4px rgba(59,110,245,.12);
+}
+
+.budget-form .save-btn{
+    padding:14px 28px;
+    font-size:15px;
+}
+
+.budget-hint{
+    margin-top:16px;
+    font-size:13px;
+    color:var(--slate-400);
+}
+
+@media (max-width:640px){
+    .budget-strip{ flex-direction:column; align-items:stretch; gap:12px; }
+    .budget-strip-pct{ text-align:left; }
+    .budget-form{ flex-direction:column; }
+}
+
+/* ============================================ */
+/*  BUDGET — set-budget BUTTON (dashboard)       */
+/* ============================================ */
+
+.budget-set-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    background:linear-gradient(135deg, var(--blue-500), var(--blue-600));
+    color:#fff;
+    text-decoration:none;
+    padding:15px 28px;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:600;
+    box-shadow:0 8px 20px rgba(37,84,230,.28);
+    transition:.2s ease;
+    margin-bottom:24px;
+}
+
+.budget-set-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 26px rgba(37,84,230,.36);
+}
+
+.budget-set-btn i:last-child{
+    font-size:13px;
+    transition:transform .2s ease;
+}
+
+.budget-set-btn:hover i:last-child{
+    transform:translateX(3px);
+}
+
+/* ---------- BUDGET BLOCK (overall + category minis) ---------- */
+
+.budget-block{
+    margin-bottom:24px;
+}
+
+.budget-block .budget-strip{
+    margin-bottom:0;
+}
+
+.budget-block .budget-strip + .cat-budget-mini-wrap{
+    margin-top:12px;
+}
+
+/* category mini bars on dashboard */
+.cat-budget-mini-wrap{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+    gap:12px;
+    text-decoration:none;
+}
+
+.cat-budget-mini{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    box-shadow:var(--shadow-sm);
+    transition:.2s ease;
+}
+
+.cat-budget-mini-wrap:hover .cat-budget-mini{
+    box-shadow:var(--shadow-md);
+}
+
+.cat-budget-mini-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:8px;
+}
+
+.cat-budget-mini-name{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+}
+
+.cat-budget-mini-pct{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:13px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+}
+
+.cat-budget-mini-bar{
+    height:7px;
+    background:var(--bg);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:8px;
+}
+
+.cat-budget-mini-amt{
+    font-size:12px;
+    color:var(--slate-400);
+    font-variant-numeric:tabular-nums;
+}
+
+/* ============================================ */
+/*  BUDGET — per-category FORM (budget page)     */
+/* ============================================ */
+
+.cat-budget-divider{
+    height:1px;
+    background:var(--line);
+    margin:28px 0;
+}
+
+.budget-optional{
+    font-size:12px;
+    font-weight:500;
+    text-transform:none;
+    letter-spacing:0;
+    color:var(--slate-400);
+    background:var(--bg);
+    padding:3px 10px;
+    border-radius:999px;
+    margin-left:6px;
+    vertical-align:middle;
+}
+
+.cat-budget-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:16px;
+    margin-bottom:24px;
+}
+
+.cat-budget-row{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px;
+}
+
+.cat-budget-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
+
+.cat-budget-name{
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+}
+
+.cat-budget-spent{
+    font-size:12.5px;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+}
+
+.cat-budget-muted{
+    color:var(--slate-400);
+    font-weight:500;
+}
+
+.cat-budget-bar{
+    height:8px;
+    background:#e8edf5;
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:12px;
+}
+
+.cat-budget-input-wrap{
+    position:relative;
+}
+
+.cat-budget-input-wrap .budget-currency{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--slate-400);
+    font-size:14px;
+    font-weight:600;
+}
+
+.cat-budget-input-wrap input{
+    width:100%;
+    padding:11px 14px 11px 32px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    outline:none;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--surface);
+    transition:.18s ease;
+}
+
+.cat-budget-input-wrap input:focus{
+    border-color:var(--blue-500);
+    box-shadow:0 0 0 4px rgba(59,110,245,.12);
+}
+
+.budget-save-btn{
+    width:100%;
+    justify-content:center;
+    padding:15px;
+    font-size:15px;
+}
+
+.budget-form-title i{
+    color:var(--blue-500);
+    margin-right:6px;
+}
+
+/* ============================================ */
+/*  NAVBAR — jump-to-expenses link               */
+/* ============================================ */
+
+.nav-jump{
+    text-decoration:none;
+    color:var(--slate-600);
+    font-size:14px;
+    font-weight:600;
+    padding:10px 22px;
+    border-radius:999px;
+    transition:.2s ease;
+}
+
+.nav-jump:hover{
+    color:var(--blue-600);
+    background:var(--blue-50);
+}
+
+/* offset so the table heading isn't flush against the top when scrolled to */
+#expenseList{
+    scroll-margin-top:24px;
+}

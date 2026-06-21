@@ -21,4 +21,6 @@ urlpatterns = [
     
     path('monthly-history/',views.monthly_history,name='monthly_history'),
 
+    path('budget/',views.budget,name='budget'),
+
 ]

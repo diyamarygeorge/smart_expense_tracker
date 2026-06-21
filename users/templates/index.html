@@ -34,8 +34,23 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         Dashboard
     </a>
 
+    <a href="#expenseList"
+       class="nav-jump"
+       onclick="scrollToExpenses(event)">
+        My Expenses
+    </a>
+
     <a href="{% url 'monthly_history' %}">
         Monthly History
+    </a>
+
+    <a href="{% url 'budget' %}">
+        Budget
+    </a>
+
+    <a href="{% url 'logout' %}"
+       class="nav-logout">
+        Logout
     </a>
 
 </div>
@@ -61,12 +76,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <div>
 
-        <a href="{% url 'logout' %}"
-           class="logout-btn">
+        <button
+            class="add-btn"
+            onclick="openModal()">
 
-            Logout
+            + Add Expense
 
-        </a>
+        </button>
 
     </div>
 
@@ -104,6 +120,51 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 </div>
 
 
+<!-- BUDGET STRIP -->
+
+{% if budget_status != 'none' or category_budgets %}
+<div class="budget-block">
+
+    {% if budget_status != 'none' %}
+    <a href="{% url 'budget' %}" class="budget-strip budget-strip-{{ budget_status }}">
+        <div class="budget-strip-info">
+            <span class="budget-strip-label">Monthly budget</span>
+            <span class="budget-strip-amount">₹{{ full_month_spent }} <span class="budget-strip-of">/ ₹{{ monthly_limit }}</span></span>
+        </div>
+        <div class="budget-strip-bar">
+            <div class="budget-fill budget-fill-{{ budget_status }}" style="width: {{ budget_percent }}%;"></div>
+        </div>
+        <div class="budget-strip-pct budget-pct-{{ budget_status }}">{{ budget_percent }}%</div>
+    </a>
+    {% endif %}
+
+    {% if category_budgets %}
+    <a href="{% url 'budget' %}" class="cat-budget-mini-wrap">
+        {% for cb in category_budgets %}
+        <div class="cat-budget-mini">
+            <div class="cat-budget-mini-top">
+                <span class="cat-budget-mini-name">{{ cb.category }}</span>
+                <span class="cat-budget-mini-pct budget-pct-{{ cb.status }}">{{ cb.percent }}%</span>
+            </div>
+            <div class="cat-budget-mini-bar">
+                <div class="budget-fill budget-fill-{{ cb.status }}" style="width: {{ cb.percent }}%;"></div>
+            </div>
+            <span class="cat-budget-mini-amt">₹{{ cb.spent }} / ₹{{ cb.limit }}</span>
+        </div>
+        {% endfor %}
+    </a>
+    {% endif %}
+
+</div>
+{% else %}
+<a href="{% url 'budget' %}" class="budget-set-btn">
+    <i class="fa-solid fa-piggy-bank"></i>
+    <span>Set a monthly budget</span>
+    <i class="fa-solid fa-arrow-right"></i>
+</a>
+{% endif %}
+
+
 <!-- CHARTS -->
 
 <div class="charts">
@@ -129,9 +190,39 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 </div>
 
 
+<!-- SEARCH + FILTER BAR -->
+
+<form method="GET" class="filter-bar" id="filterBar">
+
+    <div class="search-field">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+            type="text"
+            name="search"
+            value="{{ search_query }}"
+            placeholder="Search items..."
+            autocomplete="off">
+    </div>
+
+    <select name="category" onchange="document.getElementById('filterBar').submit()">
+        <option value="All" {% if category_filter == 'All' %}selected{% endif %}>All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="filter-apply-btn">Search</button>
+
+    {% if search_query or category_filter != 'All' %}
+    <a href="{% url 'dashboard' %}" class="filter-clear-btn">Clear</a>
+    {% endif %}
+
+</form>
+
+
 <!-- TABLE -->
 
-<div class="table-container">
+<div class="table-container" id="expenseList">
 
     <table>
 
@@ -215,21 +306,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 </div>
 
 
-<!-- ADD BUTTON -->
-
-<div class="button-section">
-
-    <button
-        class="add-btn"
-        onclick="openModal()">
-
-        + Add Expense
-
-    </button>
-
-</div>
-
-
 <!-- TOTAL -->
 
 <div class="total">
@@ -288,6 +364,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <input
             type="date"
             name="expense_date"
+            id="expenseDateInput"
+            value="{{ today|date:'Y-m-d' }}"
+            onclick="openDatePicker(this)"
             required>
 
         <div class="modal-buttons">
@@ -392,6 +471,21 @@ function closeDeleteModal(){
     document.getElementById(
         "deleteModal"
     ).style.display = "none";
+}
+
+function scrollToExpenses(e){
+    e.preventDefault();
+    document.getElementById("expenseList").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+function openDatePicker(el){
+    // Native calendar popup when the whole field is clicked (not just the icon)
+    if (typeof el.showPicker === "function") {
+        try { el.showPicker(); } catch (e) { /* showPicker can throw if not user-activated */ }
+    }
 }
 
 </script>
