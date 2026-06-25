@@ -61,7 +61,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     <div>
 
         <h1>
-            Hi {{ request.user.username }} 👋
+            Hi {{ request.user.username }} 
         </h1>
 
         <p>
@@ -188,6 +188,26 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     </div>
 
 </div>
+
+
+<!-- AI INSIGHTS -->
+
+{% if insights %}
+<div class="insights-card">
+    <div class="insights-head">
+        <i class="fa-solid fa-lightbulb"></i>
+        <span>Insights</span>
+    </div>
+    <div class="insights-list">
+        {% for ins in insights %}
+        <div class="insight insight-{{ ins.tone }}">
+            <i class="fa-solid {{ ins.icon }}"></i>
+            <span>{{ ins.text }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 
 <!-- SEARCH + FILTER BAR -->
@@ -328,18 +348,38 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <h2>Add Expense</h2>
 
-    <form method="POST">
+    <!-- QUICK ADD (offline smart parse) -->
+    <div class="quick-add">
+        <div class="quick-add-field">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <input
+                type="text"
+                id="quickAddInput"
+                placeholder="Try: spent 450 on biryani yesterday"
+                autocomplete="off"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();runQuickAdd();}">
+        </div>
+        <button type="button" class="quick-add-btn" onclick="runQuickAdd()">
+            Fill
+        </button>
+    </div>
+    <div class="quick-add-hint" id="quickAddHint">Type naturally, then hit Fill — or enter fields manually below.</div>
+
+    <form method="POST" id="expenseForm">
 
         {% csrf_token %}
 
         <input
             type="text"
             name="item_name"
+            id="itemNameInput"
             placeholder="Item Purchased"
+            onblur="autoCategorize()"
             required>
 
         <select
-            name="category">
+            name="category"
+            id="categoryInput">
 
             <option value="Food">Food</option>
 
@@ -358,6 +398,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <input
             type="number"
             name="amount"
+            id="amountInput"
             placeholder="Price"
             required>
 
@@ -446,6 +487,14 @@ function openModal() {
     document.getElementById(
         "expenseModal"
     ).style.display = "flex";
+
+    const hint = document.getElementById("quickAddHint");
+    if(hint){
+        hint.textContent = "Type naturally, then hit Fill — or enter fields manually below.";
+        hint.className = "quick-add-hint";
+    }
+    const qa = document.getElementById("quickAddInput");
+    if(qa){ qa.value = ""; }
 }
 
 function closeModal() {
@@ -471,6 +520,66 @@ function closeDeleteModal(){
     document.getElementById(
         "deleteModal"
     ).style.display = "none";
+}
+
+function getCookie(name){
+    const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return v ? v.pop() : '';
+}
+
+function runQuickAdd(){
+    const input = document.getElementById("quickAddInput");
+    const hint = document.getElementById("quickAddHint");
+    const text = input.value.trim();
+    if(!text){ return; }
+
+    hint.textContent = "Reading...";
+
+    fetch("/parse-expense/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ text: text })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.item_name){ document.getElementById("itemNameInput").value = data.item_name; }
+        if(data.category){ document.getElementById("categoryInput").value = data.category; }
+        if(data.amount){ document.getElementById("amountInput").value = data.amount; }
+        if(data.expense_date){ document.getElementById("expenseDateInput").value = data.expense_date; }
+
+        if(data.confident){
+            hint.textContent = "Filled in below — check and Save.";
+            hint.className = "quick-add-hint quick-add-ok";
+        } else {
+            hint.textContent = "Got the details, but no price found — add it below.";
+            hint.className = "quick-add-hint quick-add-warn";
+        }
+    })
+    .catch(() => {
+        hint.textContent = "Couldn't parse that — please fill the fields manually.";
+        hint.className = "quick-add-hint quick-add-warn";
+    });
+}
+
+function autoCategorize(){
+    const item = document.getElementById("itemNameInput").value.trim();
+    if(!item){ return; }
+    fetch("/categorize/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ item: item })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.category){ document.getElementById("categoryInput").value = data.category; }
+    })
+    .catch(() => {});
 }
 
 function scrollToExpenses(e){

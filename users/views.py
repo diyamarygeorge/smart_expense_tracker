@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+import json
+from .ai_parser import parse_expense, categorize, generate_insights
 
 from django.contrib.auth.models import User
 
@@ -280,6 +283,39 @@ def dashboard(request):
             'status': status,
         })
 
+    # ---------- SPENDING INSIGHTS (offline) ----------
+    # Determine last month's range
+    if today.month == 1:
+        lm_month, lm_year = 12, today.year - 1
+    else:
+        lm_month, lm_year = today.month - 1, today.year
+
+    last_month_qs = Expense.objects.filter(
+        user=request.user,
+        expense_date__month=lm_month,
+        expense_date__year=lm_year
+    )
+    last_month_cat = defaultdict(float)
+    for e in last_month_qs:
+        last_month_cat[e.category] += float(e.amount)
+
+    # This month's full (unfiltered) category totals
+    this_month_cat = defaultdict(float)
+    for e in Expense.objects.filter(
+        user=request.user,
+        expense_date__month=today.month,
+        expense_date__year=today.year
+    ):
+        this_month_cat[e.category] += float(e.amount)
+
+    insights = generate_insights(
+        dict(this_month_cat),
+        dict(last_month_cat),
+        budget_limit=monthly_limit if monthly_limit > 0 else None,
+        days_elapsed=today.day,
+        days_in_month=days_in_month,
+    )
+
     context = {
 
         'today': today,
@@ -315,6 +351,7 @@ def dashboard(request):
         'budget_overage': budget_overage,
         'budget_status': budget_status,
         'category_budgets': category_budgets,
+        'insights': insights,
 
     }
 
@@ -561,3 +598,41 @@ def monthly_history(request):
     }
 
     return render(request, 'monthly_history.html', context)
+
+
+
+@login_required
+def parse_expense_view(request):
+    """
+    Offline NLP endpoint. Accepts POST {text: "..."} and returns parsed fields.
+    Used by the dashboard 'quick add' box to auto-fill the expense form.
+    """
+    if request.method != "POST":
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+    except (ValueError, UnicodeDecodeError):
+        body = {}
+
+    text = body.get('text', '')
+    result = parse_expense(text)
+    return JsonResponse(result)
+
+
+@login_required
+def categorize_view(request):
+    """
+    Offline auto-categorizer. Accepts POST {item: "..."} -> {category: "..."}.
+    Used to auto-pick a category as the user types the item name.
+    """
+    if request.method != "POST":
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    try:
+        body = json.loads(request.body.decode('utf-8'))
+    except (ValueError, UnicodeDecodeError):
+        body = {}
+
+    item = body.get('item', '')
+    return JsonResponse({'category': categorize(item)})

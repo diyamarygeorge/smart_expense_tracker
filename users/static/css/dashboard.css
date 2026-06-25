@@ -40,8 +40,11 @@
 body{
     font-family:'Inter',sans-serif;
     background:
-        radial-gradient(900px 500px at 100% -10%, var(--blue-50), transparent 60%),
-        var(--bg);
+        radial-gradient(1100px 600px at 50% -220px, rgba(59,110,245,.30), transparent 60%),
+        radial-gradient(800px 500px at 100% 0%, rgba(37,84,230,.14), transparent 55%),
+        radial-gradient(700px 500px at 0% 8%, rgba(139,92,246,.10), transparent 55%),
+        linear-gradient(180deg, #e9f0ff 0%, var(--bg) 340px);
+    background-attachment:fixed;
     color:var(--ink);
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
@@ -1239,3 +1242,147 @@ input[type="date"]{
 #expenseList{
     scroll-margin-top:24px;
 }
+
+/* ============================================ */
+/*  QUICK ADD — offline smart parse              */
+/* ============================================ */
+
+.quick-add{
+    display:flex;
+    gap:8px;
+    margin-bottom:8px;
+}
+
+.quick-add-field{
+    position:relative;
+    flex:1;
+}
+
+.quick-add-field i{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--blue-500);
+    font-size:14px;
+    pointer-events:none;
+}
+
+.quick-add-field input{
+    width:100%;
+    padding:13px 14px 13px 38px;
+    border:1.5px solid var(--blue-200);
+    border-radius:12px;
+    outline:none;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    background:linear-gradient(135deg, rgba(59,110,245,.05), rgba(139,92,246,.05));
+    transition:.18s ease;
+}
+
+.quick-add-field input::placeholder{
+    color:var(--slate-400);
+}
+
+.quick-add-field input:focus{
+    border-color:var(--blue-500);
+    box-shadow:0 0 0 4px rgba(59,110,245,.12);
+}
+
+.quick-add-btn{
+    padding:13px 22px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--blue-500), var(--blue-600));
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(37,84,230,.26);
+    transition:.18s ease;
+}
+
+.quick-add-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 22px rgba(37,84,230,.34);
+}
+
+.quick-add-hint{
+    font-size:12.5px;
+    color:var(--slate-400);
+    margin-bottom:20px;
+    padding-left:2px;
+    transition:.2s ease;
+}
+
+.quick-add-ok{ color:var(--green); font-weight:600; }
+.quick-add-warn{ color:#f59e0b; font-weight:600; }
+
+/* a subtle divider feel between quick-add and manual form */
+.quick-add-hint{
+    border-bottom:1px dashed var(--line);
+    padding-bottom:16px;
+}
+
+/* ============================================ */
+/*  AI INSIGHTS CARD                             */
+/* ============================================ */
+
+.insights-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:24px 26px;
+    box-shadow:var(--shadow-md);
+    margin-bottom:28px;
+}
+
+.insights-head{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:16px;
+}
+
+.insights-head i{
+    color:#f59e0b;
+    font-size:16px;
+}
+
+.insights-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.insight{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:13px 16px;
+    border-radius:12px;
+    font-size:14px;
+    line-height:1.45;
+    background:var(--bg);
+}
+
+.insight i{
+    margin-top:2px;
+    font-size:14px;
+    flex-shrink:0;
+}
+
+.insight-info{ color:var(--ink); }
+.insight-info i{ color:var(--blue-500); }
+
+.insight-ok{ background:rgba(16,185,129,.07); color:#065f46; }
+.insight-ok i{ color:var(--green); }
+
+.insight-warn{ background:rgba(245,158,11,.08); color:#92400e; }
+.insight-warn i{ color:#f59e0b; }

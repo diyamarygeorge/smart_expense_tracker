@@ -23,4 +23,8 @@ urlpatterns = [
 
     path('budget/',views.budget,name='budget'),
 
+    path('parse-expense/',views.parse_expense_view,name='parse_expense'),
+
+    path('categorize/',views.categorize_view,name='categorize'),
+
 ]
